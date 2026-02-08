@@ -1,13 +1,18 @@
-package org.example;
+package org.example.domain;
+
 import java.util.Objects;
 
 public class Student extends Person {
+
     private int age;
+    private Group group;
 
     public Student(int id, String name, String surname, int age) {
         super(id, name, surname);
         this.age = age;
     }
+
+    // ===== getters =====
     public String getName() {
         return name;
     }
@@ -20,6 +25,15 @@ public class Student extends Person {
         return age;
     }
 
+    public Group getGroup() {
+        return group;
+    }
+
+    // ===== setter =====
+    public void setGroup(Group group) {
+        this.group = group;
+    }
+
     public boolean isAdult() {
         return age >= 18;
     }
@@ -27,11 +41,6 @@ public class Student extends Person {
     @Override
     public String getRole() {
         return "Student";
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + ", age=" + age;
     }
 
     @Override
@@ -45,5 +54,15 @@ public class Student extends Person {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", age=" + age +
+                '}';
     }
 }

@@ -1,4 +1,4 @@
-package org.example;
+package org.example.config;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,7 +8,7 @@ public class DBConnection {
 
     private static final String URL = "jdbc:postgresql://localhost:5432/university_db";
     private static final String USER = "postgres";
-    private static final String PASSWORD = "Kazik008";
+    private static final String PASSWORD = "postgres";
 
     public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(URL, USER, PASSWORD);

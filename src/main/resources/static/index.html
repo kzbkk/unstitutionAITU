@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Students Management</title>
+
+    <style>
+        :root {
+            --bg: #0e1116;
+            --card: #161a22;
+            --border: #2a2f3a;
+            --text: #e7eaf0;
+            --muted: #9aa3b2;
+            --accent: #4c8bf5;
+            --accent-hover: #3a73d9;
+            --danger: #e35d5d;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 40px;
+            background: var(--bg);
+            color: var(--text);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                         "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        h1 {
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        h2 {
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            max-width: 640px;
+            box-shadow: 0 10px 28px rgba(0,0,0,.25);
+        }
+
+        input {
+            width: 100%;
+            padding: 10px 12px;
+            margin: 6px 0;
+            background: #0f131a;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            outline: none;
+        }
+
+        input::placeholder {
+            color: var(--muted);
+        }
+
+        input:focus {
+            border-color: var(--accent);
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            border: none;
+            border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background .2s ease, transform .05s ease;
+        }
+
+        button:hover {
+            background: var(--accent-hover);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        button.secondary {
+            background: #2b303c;
+        }
+
+        button.secondary:hover {
+            background: #3a404e;
+        }
+
+        button.danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        th {
+            text-align: left;
+            color: var(--muted);
+            font-weight: 500;
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+        td:last-child {
+            display: flex;
+            gap: 6px;
+        }
+
+        td button {
+            width: auto;
+            padding: 6px 10px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Students</h1>
+
+<div class="card">
+    <button class="secondary" onclick="location.href='courses.html'">
+        Go to Courses →
+    </button>
+</div>
+
+<div class="card">
+    <h2>Student Form</h2>
+
+    <input id="id" type="number" placeholder="ID">
+    <input id="name" type="text" placeholder="Name">
+    <input id="surname" type="text" placeholder="Surname">
+    <input id="age" type="number" placeholder="Age">
+
+    <button onclick="addStudent()">Add Student</button>
+    <button class="secondary" onclick="updateStudent()">Update Student</button>
+</div>
+
+<div class="card">
+    <h2>Students</h2>
+
+    <button class="secondary" onclick="loadStudents()">Refresh</button>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Age</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody id="studentsTable"></tbody>
+    </table>
+</div>
+
+<script>
+    const API_URL = "http://localhost:8080/api/students";
+
+    function loadStudents() {
+        fetch(API_URL)
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("studentsTable");
+                table.innerHTML = "";
+
+                data.forEach(s => {
+                    table.innerHTML += `
+                        <tr>
+                            <td>${s.id}</td>
+                            <td>${s.name}</td>
+                            <td>${s.surname}</td>
+                            <td>${s.age}</td>
+                            <td>
+                                <button class="secondary"
+                                    onclick="editStudent(${s.id}, '${s.name}', '${s.surname}', ${s.age})">
+                                    Edit
+                                </button>
+                                <button class="danger"
+                                    onclick="deleteStudent(${s.id})">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            });
+    }
+
+    function editStudent(id, name, surname, age) {
+        document.getElementById("id").value = id;
+        document.getElementById("name").value = name;
+        document.getElementById("surname").value = surname;
+        document.getElementById("age").value = age;
+    }
+
+    function addStudent() {
+        const student = {
+            id: id.value,
+            name: name.value,
+            surname: surname.value,
+            age: age.value
+        };
+
+        fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(student)
+        }).then(loadStudents);
+    }
+
+    function updateStudent() {
+        const student = {
+            name: name.value,
+            surname: surname.value,
+            age: age.value
+        };
+
+        fetch(`${API_URL}/${id.value}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(student)
+        }).then(loadStudents);
+    }
+
+    function deleteStudent(id) {
+        fetch(`${API_URL}/${id}`, {
+            method: "DELETE"
+        }).then(loadStudents);
+    }
+
+    loadStudents();
+</script>
+
+</body>
+</html>

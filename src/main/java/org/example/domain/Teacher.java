@@ -1,14 +1,15 @@
-package org.example;
+package org.example.domain;
+
 import java.util.Objects;
 
 public class Teacher extends Person {
+
     private String subject;
 
     public Teacher(int id, String name, String surname, String subject) {
         super(id, name, surname);
         this.subject = subject;
     }
-
 
     public String getSubject() {
         return subject;
@@ -17,11 +18,6 @@ public class Teacher extends Person {
     @Override
     public String getRole() {
         return "Teacher";
-    }
-
-    @Override
-    public String toString() {
-        return super.toString() + ", subject=" + subject;
     }
 
     @Override
